@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Barclay Bank - Account Opened Successfully</title>
+    <style>
+        body {
+            background-color: white;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 350px;
+            height: 300px;
+            padding: 25px;
+            background-color: #EF0107;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-top: 0;
+            color: #063672;
+        }
+
+        h2 {
+            font-size: 18px;
+            color: #063672;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .account-details {
+            font-weight: bold;
+        }
+
+        .dynamic-data {
+            color: white;
+            line-height: 1.2;
+        }
+
+        .pin-change-button {
+            display: inline-block;
+            background-color: #063672;
+            color: white;
+            padding: 10px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+            .pin-change-button:hover {
+                background-color: #032148;
+            }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 20px;
+        }
+
+        .letter-b {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="letter-b">B</div>
+        <h1>Account Opened Successfully</h1>
+        <p class="account-details">Account Number: <span class="dynamic-data">[dynamic account number]</span></p>
+        <p class="account-details">Account Name: <span class="dynamic-data">[dynamic account name]</span></p>
+        <h2>Please kindly change your PIN immediately.</h2>
+        <a class="pin-change-button" href="[dynamic pin change URL]">Change PIN</a>
+    </div>
+</body>
+</html>
+
