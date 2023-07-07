@@ -82,7 +82,8 @@ namespace BarclaysInterBankApp.Application.AccountManager
                              .Replace("[dynamic reference code]", transaction.TransactionReference)
                              .Replace("[dynamic transaction type]", transaction.Type.ToString())
                              .Replace("[dynamic amount]", transaction.Amount.ToString())
-                            .Replace("[dynamic current balance]", transaction.CurrentBalance.ToString());
+                            .Replace("[dynamic current balance]", transaction.CurrentBalance.ToString())
+                            .Replace("[dynamic account Name]", transaction.Account.AccountName);
                 return emailbody;
             }
             catch (Exception)

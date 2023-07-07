@@ -42,7 +42,7 @@ namespace BarclaysInterBankApp.Application.Implementation
                     throw new AccountNotFountException("This Account does not exist in our database");
                 }
 
-                if (accountNumber.PinHash == AccountGenerateManager.HashPin(topUp.PinHash) && amount >= 0)
+                if (accountNumber.PinHash == AccountGenerateManager.HashPin(topUp.PinHash) && amount > 0)
                 {
                     var topUpDetails = _mapper.Map<Account>(topUp);
                     accountNumber.CurrentAccountBalance += amount;
