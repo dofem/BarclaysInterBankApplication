@@ -113,7 +113,7 @@ namespace BarclaysInterBankApp.Application.Implementation
                     _emailService.SendEmail(From, accountNumber.Email, subject, message);
 
                     // Log transfer information
-                    Log.Information("Transfer successful: {@Transaction}", transaction);
+                    Log.Information("Transfer is successful: {@Transaction}", transaction);
 
                     return new TransferResponse
                     {
