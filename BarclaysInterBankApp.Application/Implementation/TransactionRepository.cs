@@ -36,16 +36,16 @@ namespace BarclaysInterBankApp.Application.Implementation
         {
             try
             {
-                var accountNumber = _context.Accounts.Where(A => A.AccountNumber == topUp.AccountNumber).FirstOrDefault();
-                if (accountNumber == null)
+                var accountholderDetails = _context.Accounts.Where(A => A.AccountNumber == topUp.AccountNumber).FirstOrDefault();
+                if (accountholderDetails == null)
                 {
                     throw new AccountNotFountException("This Account does not exist in our database");
                 }
 
-                if (accountNumber.PinHash == AccountGenerateManager.HashPin(topUp.PinHash) && amount > 0)
+                if (accountholderDetails.PinHash == AccountGenerateManager.HashPin(topUp.PinHash) && amount > 0)
                 {
                     var topUpDetails = _mapper.Map<Account>(topUp);
-                    accountNumber.CurrentAccountBalance += amount;
+                    accountholderDetails.CurrentAccountBalance += amount;
                     var transaction = new Transaction
                     {
                         TransactionId = Guid.NewGuid(),
@@ -57,8 +57,8 @@ namespace BarclaysInterBankApp.Application.Implementation
                         TransactionReference = AccountGenerateManager.GenerateReferenceNumber(),
                         Type = Domain.Enums.TransactionType.TOPUP,
                         Timestamp = DateTime.UtcNow,
-                        AccountId = accountNumber.Id,
-                       CurrentBalance = accountNumber.CurrentAccountBalance
+                        AccountId = accountholderDetails.Id,
+                       CurrentBalance = accountholderDetails.CurrentAccountBalance
                     };
                     await _context.Transactions.AddAsync(transaction);
                     await _context.SaveChangesAsync();
@@ -66,7 +66,7 @@ namespace BarclaysInterBankApp.Application.Implementation
                     string subject = "TRANSACTION NOTIFICATION";
                     string message = AccountGenerateManager.GetTransactionMessage(transaction);
                     string From = _emailConfiguration.FromEmail;
-                    _emailService.SendEmail(From, accountNumber.Email, subject, message);
+                    _emailService.SendEmail(From, accountholderDetails.Email, subject, message);
 
                     return new TopUpResponse
                     {

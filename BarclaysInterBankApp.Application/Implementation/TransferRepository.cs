@@ -51,13 +51,13 @@ namespace BarclaysInterBankApp.Application.Implementation
         {
             try
             {
-                var accountNumber = _context.Accounts.SingleOrDefault(A => A.AccountNumber == paystackTransfer.Source_Bank_Account);
-                if (accountNumber == null)
+                var accountholderDetails = _context.Accounts.SingleOrDefault(A => A.AccountNumber == paystackTransfer.Source_Bank_Account);
+                if (accountholderDetails == null)
                 {
                     throw new Exception("Account not found.");
                 }
 
-                if (string.IsNullOrEmpty(PinHash) || accountNumber.PinHash != AccountGenerateManager.HashPin(PinHash) || paystackTransfer.Amount < 0)
+                if (string.IsNullOrEmpty(PinHash) || accountholderDetails.PinHash != AccountGenerateManager.HashPin(PinHash) || paystackTransfer.Amount < 0)
                 {
                     throw new Exception("Invalid Pin or amount.");
                 }
@@ -87,12 +87,12 @@ namespace BarclaysInterBankApp.Application.Implementation
                 ApiResponse<InitiateTransfer> transferResponse = await InitiateTransfer(paystackTransfer.Reason, paystackTransfer.Destination_Account, paystackTransfer.Amount, recepientCode);
                 if (transferResponse != null && transferResponse.IsSuccess && transferResponse.Data?.status == true)
                 {
-                    accountNumber.CurrentAccountBalance -= paystackTransfer.Amount;
+                    accountholderDetails.CurrentAccountBalance -= paystackTransfer.Amount;
                     var transaction = new Transaction
                     {
                         TransactionId = Guid.NewGuid(),
                         TransactionStatus = Domain.Enums.TransStatus.PENDING,
-                        AccountNumber = accountNumber.AccountNumber,
+                        AccountNumber = accountholderDetails.AccountNumber,
                         IsSuccessful = true,
                         Amount = paystackTransfer.Amount,
                         TransactionDescription = $"PAYSTACK TRF IFO {beneficiaryName} WITH ACCT:{paystackTransfer.Destination_Account}",
@@ -101,8 +101,8 @@ namespace BarclaysInterBankApp.Application.Implementation
                         BeneficiaryName = beneficiaryName,
                         BeneficiaryNumber = paystackTransfer.Destination_Account,
                         Timestamp = DateTime.Now,
-                        AccountId = accountNumber.Id,
-                        CurrentBalance = accountNumber.CurrentAccountBalance
+                        AccountId = accountholderDetails.Id,
+                        CurrentBalance = accountholderDetails.CurrentAccountBalance
                     };
                     await _context.Transactions.AddAsync(transaction);
                     await _context.SaveChangesAsync();
@@ -110,7 +110,7 @@ namespace BarclaysInterBankApp.Application.Implementation
                     string subject = "TRANSACTION NOTIFICATION";
                     string message = AccountGenerateManager.GetTransactionMessage(transaction);
                     string From = _emailConfiguration.FromEmail;
-                    _emailService.SendEmail(From, accountNumber.Email, subject, message);
+                    _emailService.SendEmail(From, accountholderDetails.Email, subject, message);
 
                     // Log transfer information
                     Log.Information("Transfer is successful: {@Transaction}", transaction);

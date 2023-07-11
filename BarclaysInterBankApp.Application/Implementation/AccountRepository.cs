@@ -81,8 +81,8 @@ namespace BarclaysInterBankApp.Application.Implementation
 
         public async Task<PinChangeResponse> ChangePin(ChangePinRequest changePinRequest, string newPin)
         {
-            var account = _context.Accounts.Where(a => a.AccountNumber == changePinRequest.AccountNumber).FirstOrDefault();
-            if (account == null)
+            var accountHolder = _context.Accounts.Where(a => a.AccountNumber == changePinRequest.AccountNumber).FirstOrDefault();
+            if (accountHolder == null)
             {
                 return new PinChangeResponse
                 {
@@ -92,7 +92,7 @@ namespace BarclaysInterBankApp.Application.Implementation
                 };
             }
             var currentPinHash = AccountGenerateManager.HashPin(changePinRequest.PinHash);
-            if (account.PinHash != currentPinHash)
+            if (accountHolder.PinHash != currentPinHash)
             {
                 return new PinChangeResponse
                 {
@@ -103,8 +103,8 @@ namespace BarclaysInterBankApp.Application.Implementation
             }
             // Perform additional checks if needed before changing the PIN
             var newPinHash = AccountGenerateManager.HashPin(newPin);
-            account.PinHash = newPinHash;
-            _context.Accounts.Update(account);
+            accountHolder.PinHash = newPinHash;
+            _context.Accounts.Update(accountHolder);
             _context.SaveChanges();
 
             return new PinChangeResponse
